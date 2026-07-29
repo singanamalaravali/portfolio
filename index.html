@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ravali Singanamala — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1420;
+    --panel:#161D2E;
+    --panel-2:#1D2537;
+    --line:#2A3348;
+    --paper:#EDEFF5;
+    --muted:#8A93A8;
+    --amber:#FFB238;
+    --amber-dim:#7A5A24;
+    --teal:#3DDC97;
+    --teal-dim:#1E4536;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'IBM Plex Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--amber); color:var(--ink);}
+  :focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+
+  .wrap{max-width:1040px; margin:0 auto; padding:0 28px;}
+
+  /* NAV */
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(15,20,32,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1040px; margin:0 auto; padding:16px 28px;
+  }
+  .brand{font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.02em; display:flex; align-items:center; gap:8px;}
+  .brand .dot{width:9px; height:9px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px var(--teal-dim); flex:none;}
+  .nav-links{display:flex; gap:26px; font-size:14px; color:var(--muted);}
+  .nav-links a{text-decoration:none; transition:color .2s;}
+  .nav-links a:hover{color:var(--paper);}
+  .nav-cta{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em;
+    background:transparent; border:1px solid var(--amber); color:var(--amber);
+    padding:9px 16px; border-radius:2px; text-decoration:none; white-space:nowrap;
+    transition:background .2s, color .2s;
+  }
+  .nav-cta:hover{background:var(--amber); color:var(--ink);}
+  @media (max-width:720px){ .nav-links{display:none;} }
+
+  /* HERO */
+  .hero{
+    padding:168px 0 96px;
+    position:relative;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; top:-120px; right:-160px;
+    width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,178,56,0.14), transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--teal); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow .rule{width:34px; height:1px; background:var(--teal);}
+  h1.headline{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(38px, 6vw, 64px); line-height:1.04; letter-spacing:-0.01em;
+    margin:0 0 22px; max-width:820px;
+  }
+  h1.headline .accent{color:var(--amber);}
+  .sub{
+    font-size:17px; color:var(--muted); max-width:640px; margin:0 0 36px;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:52px;}
+  .btn{
+    font-family:var(--font-mono); font-size:13px; letter-spacing:0.03em;
+    padding:12px 20px; border-radius:2px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:9px;
+    transition:transform .15s ease, background .2s, border-color .2s;
+    border:1px solid var(--line); color:var(--paper);
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--amber); border-color:var(--amber); color:var(--ink); font-weight:600;}
+  .btn-primary:hover{background:#ffc35e;}
+  .btn-ghost:hover{border-color:var(--muted);}
+  .btn svg{width:15px; height:15px; flex:none;}
+
+  .board{
+    display:flex; gap:0; border:1px solid var(--line); border-radius:4px; overflow:hidden;
+    font-family:var(--font-mono); font-size:12.5px;
+  }
+  .board div{padding:14px 18px; border-right:1px solid var(--line);}
+  .board div:last-child{border-right:none;}
+  .board .k{color:var(--muted); display:block; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px;}
+  .board .v{color:var(--paper);}
+  @media (max-width:640px){ .board{flex-direction:column;} .board div{border-right:none; border-bottom:1px solid var(--line);} .board div:last-child{border-bottom:none;} }
+
+  /* ROUTE LINE LAYOUT */
+  .transit{position:relative;}
+  .route-svg{
+    position:absolute; left:0; top:0; bottom:0; width:40px;
+    display:none;
+  }
+  @media (min-width:900px){ .route-svg{display:block;} .transit .wrap{padding-left:64px;} }
+
+  section{padding:74px 0; border-bottom:1px solid var(--line); position:relative;}
+  .stop-marker{
+    display:flex; align-items:center; gap:14px; margin-bottom:34px;
+  }
+  .stop-marker .num{
+    font-family:var(--font-mono); font-size:12px; color:var(--ink); background:var(--teal);
+    width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    flex:none; font-weight:600;
+  }
+  .stop-marker h2{
+    font-family:var(--font-display); font-size:28px; margin:0; letter-spacing:-0.01em;
+  }
+  .stop-marker .tag{
+    font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase;
+  }
+
+  p.lede{font-size:16px; color:#C7CDDB; max-width:680px;}
+
+  /* SKILLS */
+  .skill-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:14px;}
+  .skill-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:20px;
+  }
+  .skill-card h3{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--amber);
+    margin:0 0 12px;
+  }
+  .skill-card p{margin:0; font-size:14px; color:#C7CDDB;}
+
+  /* EXPERIENCE */
+  .exp-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:28px;
+  }
+  .exp-head{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+  .exp-head h3{font-family:var(--font-display); font-size:20px; margin:0;}
+  .exp-head .dates{font-family:var(--font-mono); font-size:12.5px; color:var(--muted);}
+  .exp-org{color:var(--muted); font-size:14px; margin-bottom:18px;}
+  ul.bullets{margin:0; padding-left:20px; color:#C7CDDB; font-size:14.5px;}
+  ul.bullets li{margin-bottom:10px;}
+  ul.bullets li::marker{color:var(--teal);}
+
+  /* PROJECTS */
+  .proj-grid{display:grid; grid-template-columns:1fr; gap:18px;}
+  .proj-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:26px;
+    display:grid; grid-template-columns:1fr; gap:14px;
+  }
+  .proj-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;}
+  .proj-top h3{font-family:var(--font-display); font-size:21px; margin:0;}
+  .status{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    padding:6px 11px; border-radius:20px; display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+  }
+  .status .sd{width:7px; height:7px; border-radius:50%;}
+  .status.live{background:var(--teal-dim); color:var(--teal);}
+  .status.live .sd{background:var(--teal);}
+  .status.enroute{background:var(--amber-dim); color:var(--amber);}
+  .status.enroute .sd{background:var(--amber);}
+  .status.built{background:#2A2438; color:#B79BF0;}
+  .status.built .sd{background:#B79BF0;}
+  .proj-tech{font-family:var(--font-mono); font-size:12px; color:var(--muted);}
+  .proj-card p.desc{margin:0; font-size:14.5px; color:#C7CDDB;}
+  .proj-card ul.bullets{font-size:14px;}
+
+  /* ACHIEVEMENTS + EDU */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:720px){ .split{grid-template-columns:1fr;} }
+  .info-card{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:24px;}
+  .info-card h4{font-family:var(--font-display); font-size:16px; margin:0 0 8px;}
+  .info-card .meta{color:var(--muted); font-size:13px; margin-bottom:10px;}
+  .info-card p{margin:0; font-size:14px; color:#C7CDDB;}
+
+  /* CONTACT / FINAL STOP */
+  .final{border-bottom:none;}
+  .contact-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr)); gap:14px; margin-top:8px;}
+  .contact-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:22px;
+    text-decoration:none; color:var(--paper); transition:border-color .2s, transform .15s;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .contact-card:hover{border-color:var(--amber); transform:translateY(-3px);}
+  .contact-card .ic{width:20px; height:20px; color:var(--amber);}
+  .contact-card .label{font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);}
+  .contact-card .val{font-size:14.5px; word-break:break-word;}
+
+  footer{padding:34px 0; text-align:center; color:var(--muted); font-size:13px; font-family:var(--font-mono);}
+
+  /* CHAT WIDGET */
+  #route-assistant-toggle{
+    position:fixed; bottom:24px; right:24px; z-index:200;
+    background:var(--amber); color:var(--ink); border:none; border-radius:30px;
+    padding:14px 20px; font-family:var(--font-mono); font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:9px; cursor:pointer;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    transition:transform .15s ease;
+  }
+  #route-assistant-toggle:hover{transform:translateY(-2px);}
+  #route-assistant-toggle svg{width:17px; height:17px;}
+
+  #chat-panel{
+    position:fixed; bottom:90px; right:24px; z-index:200;
+    width:min(360px, calc(100vw - 32px)); height:min(480px, calc(100vh - 140px));
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    display:none; flex-direction:column; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  #chat-panel.open{display:flex;}
+  .chat-head{
+    padding:14px 16px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between;
+    background:var(--panel-2);
+  }
+  .chat-head .ttl{font-family:var(--font-display); font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:8px;}
+  .chat-head .ttl .dot{width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px var(--teal-dim);}
+  .chat-head button{background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1;}
+  #chat-log{flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:12px;}
+  .msg{font-size:13.5px; line-height:1.5; max-width:88%;}
+  .msg.bot{align-self:flex-start; background:var(--panel-2); padding:10px 13px; border-radius:8px 8px 8px 2px; color:#DDE1EA; white-space:pre-wrap;}
+  .msg.user{align-self:flex-end; background:var(--teal-dim); color:var(--paper); padding:10px 13px; border-radius:8px 8px 2px 8px;}
+  .msg.typing{align-self:flex-start; color:var(--muted); font-family:var(--font-mono); font-size:12px;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:7px; padding:0 16px 12px;}
+  .chip{
+    font-family:var(--font-mono); font-size:11px; background:transparent; border:1px solid var(--line);
+    color:var(--muted); padding:6px 10px; border-radius:20px; cursor:pointer; transition:border-color .2s, color .2s;
+  }
+  .chip:hover{border-color:var(--amber); color:var(--amber);}
+  .chat-input-row{
+    border-top:1px solid var(--line); padding:10px; display:flex; gap:8px; background:var(--panel-2);
+  }
+  #chat-input{
+    flex:1; background:var(--ink); border:1px solid var(--line); border-radius:20px; color:var(--paper);
+    padding:10px 14px; font-family:var(--font-body); font-size:13.5px;
+  }
+  #chat-input:focus{outline:2px solid var(--amber); outline-offset:1px;}
+  #chat-send{
+    background:var(--amber); color:var(--ink); border:none; border-radius:50%; width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+  }
+  #chat-send svg{width:16px; height:16px;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>Ravali Singanamala</div>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="nav-cta" href="https://github.com/singanamalaravali" target="_blank" rel="noopener" style="margin-right:10px; border-color:var(--line); color:var(--paper);">GitHub</a>
+    <a class="nav-cta" href="mailto:ravalisinganamala@gmail.com" style="margin-right:10px; border-color:var(--line); color:var(--paper);">Email</a>
+    <a class="nav-cta" href="Ravali_Singanamala_Resume.pdf" download>Download Résumé</a>
+  </div>
+</header>
+
+<div class="transit">
+<svg class="route-svg" viewBox="0 0 40 3000" preserveAspectRatio="none" aria-hidden="true">
+  <line x1="20" y1="0" x2="20" y2="3000" stroke="#2A3348" stroke-width="2"/>
+  <line id="route-progress" x1="20" y1="0" x2="20" y2="0" stroke="#3DDC97" stroke-width="2"/>
+</svg>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="rule"></span>FULL STACK DEVELOPER · HYDERABAD</div>
+    <h1 class="headline">Ships mobile &amp; web apps <span class="accent">end to end</span> — Flutter front seat, Spring Boot under the hood.</h1>
+    <p class="sub">Three production apps shipped, a fourth in final rollout, and one built solo from the ground up. I move between Flutter UIs, Java/Spring Boot APIs, and Firebase real-time layers without losing speed.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="Ravali_Singanamala_Resume.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+        Download Résumé
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/singanamalaravali" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5 3.2 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.2c-3.2.7-3.8-1.4-3.8-1.4-.5-1.3-1.3-1.6-1.3-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0023.5 12c0-6.3-5.2-11.5-11.5-11.5z"/></svg>
+        GitHub
+      </a>
+      <a class="btn btn-ghost" href="mailto:ravalisinganamala@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
+        Email
+      </a>
+      <a class="btn btn-ghost" href="tel:+916304164697">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7 12.4 12.4 0 00.7 2.8 2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4 12.4 12.4 0 002.8.7 2 2 0 011.7 2z"/></svg>
+        Call
+      </a>
+      <a class="btn btn-ghost" href="https://linkedin.com/in/singanamala-ravali-939613225" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.06c.53-1 1.83-2 3.77-2 4 0 4.87 2.6 4.87 6V23h-4v-6.3c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.6-2.4 3.3V23h-4V8.5z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="board">
+      <div><span class="k">Shipped</span><span class="v">3 apps in production</span></div>
+      <div><span class="k">Solo build</span><span class="v">SprintFlow, agile PM app</span></div>
+      <div><span class="k">Stack</span><span class="v">Flutter · Spring Boot · Firebase</span></div>
+      <div><span class="k">Open to</span><span class="v">Flutter · Java Full Stack · Angular roles</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">01</span><h2>About</h2></div>
+    <p class="lede">I'm a Full Stack Developer at Alladi Cloud Solutions, building cross-platform Flutter apps and the Core Java / Spring Boot APIs behind them. My work spans booking systems, real-time messaging with Firebase, and payment integrations — deployed and managed myself on AWS EC2. I care about clean architecture and code that survives contact with real users, and I picked up a Rookie Award along the way for it.</p>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">02</span><h2>Skills</h2></div>
+    <div class="skill-grid">
+      <div class="skill-card"><h3>Mobile</h3><p>Flutter (2.x–3.x), Dart, Android, iOS, Material Design 3, custom widgets &amp; animations, responsive layouts</p></div>
+      <div class="skill-card"><h3>State Management</h3><p>Riverpod, BLoC, Provider</p></div>
+      <div class="skill-card"><h3>Firebase</h3><p>FCM push (HTTP v1), Firestore real-time listeners, Firebase Auth, Analytics</p></div>
+      <div class="skill-card"><h3>Backend</h3><p>Core Java, Spring Boot, Spring MVC, RESTful APIs (JSON), Maven</p></div>
+      <div class="skill-card"><h3>Database</h3><p>MySQL schema design &amp; query optimization, SQL, Firestore, Realtime DB</p></div>
+      <div class="skill-card"><h3>Cloud &amp; DevOps</h3><p>AWS EC2, Git, GitHub, GitHub Actions, PuTTY, WinSCP</p></div>
+      <div class="skill-card"><h3>Web Frontend</h3><p>Angular, HTML, CSS</p></div>
+      <div class="skill-card"><h3>Payments</h3><p>Razorpay SDK, UPI workflows</p></div>
+      <div class="skill-card"><h3>Architecture</h3><p>MVC, Clean Architecture, Agile / Scrum</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">03</span><h2>Experience</h2></div>
+    <div class="exp-card">
+      <div class="exp-head">
+        <h3>Flutter + Full Stack Java Developer</h3>
+        <span class="dates">Feb 2024 – Present</span>
+      </div>
+      <div class="exp-org">Alladi Cloud Solutions · Hyderabad, India</div>
+      <ul class="bullets">
+        <li>Delivered 3 production applications — CloudBus and ActNow are live in production; LocalTaxi (driver &amp; passenger apps) is in final rollout to production.</li>
+        <li>Built scalable RESTful APIs using Core Java, Spring Boot, and Spring MVC; designed and optimized MySQL schemas and queries to improve application performance.</li>
+        <li>Built cross-platform Flutter apps for Android and iOS from a single codebase, using Riverpod and BLoC for state management.</li>
+        <li>Used FCM for real-time push notifications between driver and passenger apps, and Firestore for live booking-state sync, with Firebase Auth for secure user management.</li>
+        <li>Built custom animated Flutter widgets for smoother transitions and a more polished user experience.</li>
+        <li>Integrated Razorpay for in-app fare collection supporting UPI, cards, and wallets.</li>
+        <li>Managed end-to-end deployment on AWS EC2 using Maven builds, WinSCP file transfers, and PuTTY server management.</li>
+        <li>Maintained Git workflows, conducted code reviews, and collaborated with frontend and QA teams in Agile sprints.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">04</span><h2>Projects</h2></div>
+    <div class="proj-grid">
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <h3>CloudBus — Online Bus Booking System</h3>
+          <span class="status live"><span class="sd"></span>In Production</span>
+        </div>
+        <div class="proj-tech">Flutter · Spring Boot · Core Java · AWS EC2 · REST API</div>
+        <p class="desc">Mobile and web booking platform for inter-city bus routes: seat selection, booking confirmation, and ticket generation.</p>
+        <ul class="bullets">
+          <li>Built Spring Boot microservice APIs for route management, seat availability, and booking lifecycle.</li>
+          <li>Deployed to AWS EC2 and managed via WinSCP/PuTTY for server-side configuration.</li>
+        </ul>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.brainyway.cloudbuspassengerapp" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            Passenger App — Google Play
+          </a>
+          <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.brainyway.cloudbusdriver" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            Driver App — Google Play
+          </a>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <h3>ActNow — Learning &amp; Assessment Platform</h3>
+          <span class="status live"><span class="sd"></span>In Production</span>
+        </div>
+        <div class="proj-tech">Flutter · Spring Boot · Core Java · MySQL · AWS EC2</div>
+        <p class="desc">Practice tests, chapter-level tests, and full tests so students can track performance and progress.</p>
+        <ul class="bullets">
+          <li>Backend modules for authentication, user management, and testing functionality.</li>
+          <li>Designed a scalable backend architecture with efficient logging and debugging mechanisms.</li>
+        </ul>
+        <a class="btn btn-ghost" style="align-self:flex-start;" href="https://play.google.com/store/apps/details?id=com.brainyway.actnow" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          ActNow App — Google Play
+        </a>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <h3>LocalTaxi — Online Cab Booking System</h3>
+          <span class="status enroute"><span class="sd"></span>Going to Production</span>
+        </div>
+        <div class="proj-tech">Flutter · Spring Boot · Core Java · Angular · Firebase (FCM) · Razorpay · AWS EC2</div>
+        <p class="desc">Driver-passenger matching and ride booking workflows, with modules for drivers, passengers, companies, and administrators.</p>
+        <ul class="bullets">
+          <li>Integrated FCM for ride updates and booking confirmations.</li>
+          <li>Built responsive cross-platform interfaces for both driver and passenger apps in Flutter.</li>
+          <li>Optimized backend performance to handle multiple concurrent ride requests.</li>
+        </ul>
+        <a class="btn btn-ghost" style="align-self:flex-start;" href="https://play.google.com/store/apps/details?id=com.brainyway.localtaxidriver" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          LocalTaxi Driver App — Google Play
+        </a>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <h3>MTM — Mobile Bartering Platform</h3>
+          <span class="status built"><span class="sd"></span>Built</span>
+        </div>
+        <div class="proj-tech">Flutter · Spring Boot · Angular · Firebase Auth · REST API</div>
+        <p class="desc">End-to-end peer-to-peer barter app: listing items, negotiating trades, and completing transactions.</p>
+        <ul class="bullets">
+          <li>Spring Boot APIs covering listing, trade-negotiation state machine, and audit-trailed transaction tracking.</li>
+          <li>Image upload with location-based item discovery using Geolocator; Dio interceptors for retry logic.</li>
+        </ul>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <h3>SprintFlow — Agile Team Management App</h3>
+          <span class="status built"><span class="sd"></span>Independently Built</span>
+        </div>
+        <div class="proj-tech">Flutter · Dart · Firebase (Firestore, Auth, FCM) · Riverpod · BLoC</div>
+        <p class="desc">Conceived, designed, and built solo — sprints, user stories, standups, and attendance with role-based access.</p>
+        <ul class="bullets">
+          <li>5 roles — Admin, Product Manager, Product Owner, Developer, Tester — with granular permissions.</li>
+          <li>Firestore-backed clean-architecture data layer, each domain fully decoupled.</li>
+          <li>Custom Responsive helper class adapting layouts across mobile, tablet, desktop.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="more">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">05</span><h2>Achievements &amp; Education</h2></div>
+    <div class="split">
+      <div class="info-card">
+        <h4>Rookie Award</h4>
+        <div class="meta">Alladi Cloud Solutions</div>
+        <p>Recognized for excellent performance and impactful contribution.</p>
+      </div>
+      <div class="info-card">
+        <h4>B.Tech — Electronics &amp; Communication Engineering</h4>
+        <div class="meta">Vaagdevi Institute of Technology and Science · 2018 – 2022 · CGPA 7.8/10</div>
+        <p>Proddatur, Kadapa</p>
+      </div>
+      <div class="info-card">
+        <h4>Intermediate (MPC)</h4>
+        <div class="meta">Sai Parameswara Junior College · 2016 – 2018 · 94%</div>
+        <p>Jammalamadugu, Kadapa</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="final">
+  <div class="wrap">
+    <div class="stop-marker"><span class="num">06</span><h2>Final Stop — Get in Touch</h2></div>
+    <p class="lede">Open to full stack and Flutter roles. The quickest ways to reach me are below — or ask the assistant in the corner about my work.</p>
+    <div class="contact-grid">
+      <a class="contact-card" href="https://github.com/singanamalaravali" target="_blank" rel="noopener">
+        <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5 3.2 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.2c-3.2.7-3.8-1.4-3.8-1.4-.5-1.3-1.3-1.6-1.3-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0023.5 12c0-6.3-5.2-11.5-11.5-11.5z"/></svg>
+        <span class="label">GitHub</span>
+        <span class="val">github.com/singanamalaravali</span>
+      </a>
+      <a class="contact-card" href="mailto:ravalisinganamala@gmail.com">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
+        <span class="label">Email</span>
+        <span class="val">ravalisinganamala@gmail.com</span>
+      </a>
+      <a class="contact-card" href="tel:+916304164697">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7 12.4 12.4 0 00.7 2.8 2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4 12.4 12.4 0 002.8.7 2 2 0 011.7 2z"/></svg>
+        <span class="label">Call</span>
+        <span class="val">+91 63041 64697</span>
+      </a>
+      <a class="contact-card" href="https://linkedin.com/in/singanamala-ravali-939613225" target="_blank" rel="noopener">
+        <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.06c.53-1 1.83-2 3.77-2 4 0 4.87 2.6 4.87 6V23h-4v-6.3c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.6-2.4 3.3V23h-4V8.5z"/></svg>
+        <span class="label">LinkedIn</span>
+        <span class="val">singanamala-ravali-939613225</span>
+      </a>
+      <a class="contact-card" href="Ravali_Singanamala_Resume.pdf" download>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+        <span class="label">Résumé</span>
+        <span class="val">Download PDF</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</div><!-- /transit -->
+
+<footer>Hyderabad — 500016 · Built with Flutter energy and Spring Boot reliability</footer>
+
+<!-- CHAT WIDGET -->
+<button id="route-assistant-toggle" aria-haspopup="dialog" aria-expanded="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  Route Assistant
+</button>
+
+<div id="chat-panel" role="dialog" aria-label="Chat with Ravali's route assistant">
+  <div class="chat-head">
+    <div class="ttl"><span class="dot"></span>Route Assistant</div>
+    <button id="chat-close" aria-label="Close chat">&times;</button>
+  </div>
+  <div id="chat-log">
+    <div class="msg bot">Hi! I'm a small assistant trained on Ravali's résumé. Ask me about her projects, stack, or experience.</div>
+  </div>
+  <div class="chip-row" id="chip-row"></div>
+  <div class="chat-input-row">
+    <input id="chat-input" type="text" placeholder="Ask about Ravali's work..." aria-label="Message">
+    <button id="chat-send" aria-label="Send message">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Route progress line
+  var progress = document.getElementById('route-progress');
+  function updateRoute(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop || document.body.scrollTop;
+    var height = doc.scrollHeight - doc.clientHeight;
+    var pct = height > 0 ? scrolled / height : 0;
+    progress.setAttribute('y2', String(3000 * pct));
+  }
+  document.addEventListener('scroll', updateRoute, {passive:true});
+  updateRoute();
+
+  // Chat widget
+  var toggle = document.getElementById('route-assistant-toggle');
+  var panel = document.getElementById('chat-panel');
+  var closeBtn = document.getElementById('chat-close');
+  var log = document.getElementById('chat-log');
+  var input = document.getElementById('chat-input');
+  var sendBtn = document.getElementById('chat-send');
+  var chips = document.getElementById('chip-row');
+
+  function openPanel(){
+    panel.classList.add('open');
+    toggle.setAttribute('aria-expanded','true');
+    input.focus();
+  }
+  function closePanel(){
+    panel.classList.remove('open');
+    toggle.setAttribute('aria-expanded','false');
+  }
+  toggle.addEventListener('click', function(){
+    panel.classList.contains('open') ? closePanel() : openPanel();
+  });
+  closeBtn.addEventListener('click', closePanel);
+
+  var RESUME_CONTEXT = `You are a friendly, concise assistant embedded on Ravali Singanamala's portfolio site. Answer visitor questions ONLY using the résumé facts below. Keep answers to 2-4 sentences, warm and specific, never invent facts not in this résumé. If asked something unrelated or not covered, say you only know what's in her résumé and suggest they reach out directly via email.
+
+RÉSUMÉ:
+Full Stack Developer — Flutter, Core Java & Spring Boot, Firebase. Hyderabad. Contact: ravalisinganamala@gmail.com, +91 6304164697, linkedin.com/in/singanamala-ravali-939613225.
+Summary: Delivered 3 production apps end to end — CloudBus and ActNow live in production, LocalTaxi (driver+passenger) in final rollout. Independently designed and built SprintFlow, a full-stack agile team management app. Hands-on with Riverpod, BLoC, Firebase (FCM, Firestore, Auth), MySQL, AWS EC2. She is currently open to work as a Flutter Developer, Java Full Stack Developer, or Angular Developer.
+Skills: Flutter 2.x-3.x, Dart, Android, iOS, Material Design 3; Riverpod, BLoC, Provider; Firebase FCM/Firestore/Auth/Analytics; Core Java, Spring Boot, Spring MVC, REST APIs, Maven; MySQL; AWS EC2, Git, GitHub Actions, PuTTY, WinSCP; Angular, HTML, CSS; Razorpay/UPI; MVC, Clean Architecture, Agile/Scrum.
+Experience: Flutter + Full Stack Java Developer, Alladi Cloud Solutions, Hyderabad (Feb 2024-Present). Built Spring Boot REST APIs, optimized MySQL, built cross-platform Flutter apps, used FCM/Firestore/Auth, integrated Razorpay payments, deployed on AWS EC2 via Maven/WinSCP/PuTTY, led code reviews in Agile sprints.
+Projects: CloudBus (bus booking, Flutter+Spring Boot+AWS EC2, in production). ActNow (learning/assessment platform, Flutter+Spring Boot+MySQL, in production). LocalTaxi (cab booking, Flutter+Spring Boot+Angular+Firebase+Razorpay, going to production - driver/passenger/company/admin modules, real-time ride matching). MTM (mobile bartering platform, Flutter+Spring Boot+Angular+Firebase Auth). SprintFlow (agile team management, Flutter+Firebase+Riverpod+BLoC, independently built solo, 5 role types).
+Achievements: Rookie Award at Alladi Cloud Solutions.
+Education: B.Tech Electronics & Communication Engineering, Vaagdevi Institute of Technology and Science, 2018-2022, CGPA 7.8/10. Intermediate (MPC), Sai Parameswara Junior College, 2016-2018, 94%.`;
+
+  var chatHistory = [];
+
+  // ---- Suggested-question pool (shown as rotating chip hints) -----------
+  var SUGGESTIONS = [
+    "What's her strongest stack?",
+    "Give me a list of her projects.",
+    "Is she open to work?",
+    "Tell me about LocalTaxi.",
+    "Tell me about CloudBus.",
+    "Tell me about ActNow.",
+    "Tell me about SprintFlow.",
+    "Tell me about MTM.",
+    "Did she use AI tools?",
+    "What's her notice period?",
+    "Is she open to remote work?",
+    "How many years of experience does she have?",
+    "Has she worked solo or in a team?",
+    "What's her favorite project?",
+    "What database does she use?",
+    "Does she work with Razorpay payments?",
+    "How does she handle deployment?",
+    "Does she know Angular?",
+    "Does she build for iOS and Android?",
+    "What state management does she use?",
+    "Why should we hire her?",
+    "How can I contact her?"
+  ];
+
+  function pickRandom(arr, n){
+    var copy = arr.slice();
+    var out = [];
+    while(out.length < n && copy.length){
+      var i = Math.floor(Math.random() * copy.length);
+      out.push(copy.splice(i,1)[0]);
+    }
+    return out;
+  }
+
+  function renderChips(){
+    var picks = pickRandom(SUGGESTIONS, 3);
+    chips.innerHTML = '';
+    picks.forEach(function(q){
+      var btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.setAttribute('data-q', q);
+      btn.textContent = q.replace('Tell me about ', '').replace(/\.$/, '');
+      chips.appendChild(btn);
+    });
+  }
+  renderChips();
+  // ------------------------------------------------------------------------
+
+  // ---- Hardcoded knowledge base -----------------------------------------
+  // Checked first, keyword by keyword. Keeps the bot fast, on-message, and
+  // fully working even when this page is hosted somewhere without API access.
+  var HARDCODED = [
+    {
+      keys: ['open to work', 'opportunit', 'hiring', 'available', 'looking for a role', 'new role', 'new job', 'open to new', 'job openings'],
+      a: "Yes — Ravali is open to work as a Flutter Developer, Java Full Stack Developer, or Angular Developer. She's shipped production apps across all three, so she can slot into a mobile-first team, a backend/API team, or a web frontend team. Best way to reach her: ravalisinganamala@gmail.com."
+    },
+    {
+      keys: ['project list', 'list of project', 'projects she', 'what project', 'her projects', 'all project', 'project means', 'show me project', 'projects?'],
+      a: "Here's the project list:\n\n1. CloudBus — online bus booking system (Flutter, Spring Boot, AWS EC2) — In Production\n2. ActNow — learning & assessment platform (Flutter, Spring Boot, MySQL) — In Production\n3. LocalTaxi — cab booking system, driver + passenger apps (Flutter, Spring Boot, Angular, Firebase, Razorpay) — Going to Production\n4. MTM — mobile bartering platform (Flutter, Spring Boot, Angular, Firebase Auth) — Built\n5. SprintFlow — agile team management app (Flutter, Firebase, Riverpod, BLoC) — Independently built solo"
+    },
+    {
+      keys: ['stack', 'tech stack', 'technolog', 'skills', 'strongest'],
+      a: "Her core stack is Flutter/Dart on mobile, Core Java + Spring Boot on the backend, Angular for web frontend, and Firebase (FCM, Firestore, Auth) for real-time features. She also handles her own AWS EC2 deployments and MySQL schema design."
+    },
+    {
+      keys: ['localtaxi', 'local taxi', 'cab booking', 'taxi'],
+      a: "LocalTaxi is a cab booking system with separate driver and passenger apps, plus modules for companies and admins. It's built with Flutter, Spring Boot, Angular, and Firebase (FCM for ride/booking alerts), with Razorpay for payments. The driver app is live on Google Play: play.google.com/store/apps/details?id=com.brainyway.localtaxidriver"
+    },
+    {
+      keys: ['cloudbus', 'cloud bus', 'bus booking'],
+      a: "CloudBus is a bus booking platform for inter-city routes — seat selection, booking confirmation, and ticket generation — built with Flutter and Spring Boot microservices, deployed on AWS EC2. It's live in production, with both apps on Google Play: passenger app at play.google.com/store/apps/details?id=com.brainyway.cloudbuspassengerapp and driver app at play.google.com/store/apps/details?id=com.brainyway.cloudbusdriver"
+    },
+    {
+      keys: ['actnow', 'act now', 'learning platform', 'assessment'],
+      a: "ActNow is a learning & assessment platform with practice tests, chapter-level tests, and full tests for tracking student progress. Backend is Spring Boot, frontend is Flutter. It's live in production and available on Google Play: play.google.com/store/apps/details?id=com.brainyway.actnow"
+    },
+    {
+      keys: ['mtm', 'barter'],
+      a: "MTM is a peer-to-peer mobile bartering platform — listing items, negotiating trades, completing transactions — built with Flutter, Spring Boot, Angular, and Firebase Auth, with location-based discovery."
+    },
+    {
+      keys: ['sprintflow', 'sprint flow', 'agile'],
+      a: "SprintFlow is an agile team management app Ravali independently designed and built solo — sprints, user stories, standups, and attendance, with 5 role types (Admin, Product Manager, Product Owner, Developer, Tester). Built with Flutter, Firebase, Riverpod, and BLoC."
+    },
+    {
+      keys: ['experience', 'work history', 'current job', 'current role'],
+      a: "She's currently a Flutter + Full Stack Java Developer at Alladi Cloud Solutions in Hyderabad (Feb 2024–Present), building Spring Boot APIs and cross-platform Flutter apps, with Firebase, Razorpay, and AWS EC2 deployment."
+    },
+    {
+      keys: ['education', 'degree', 'college', 'b.tech', 'btech'],
+      a: "B.Tech in Electronics & Communication Engineering from Vaagdevi Institute of Technology and Science (2018–2022, CGPA 7.8/10), and Intermediate (MPC) from Sai Parameswara Junior College (2016–2018, 94%)."
+    },
+    {
+      keys: ['achievement', 'award', 'rookie'],
+      a: "She received the Rookie Award at Alladi Cloud Solutions for excellent performance and impactful contribution."
+    },
+    {
+      keys: ['contact', 'email', 'phone', 'call', 'reach', 'linkedin'],
+      a: "You can reach Ravali at ravalisinganamala@gmail.com, call +91 6304164697, connect on LinkedIn at linkedin.com/in/singanamala-ravali-939613225, or explore her code on GitHub at github.com/singanamalaravali."
+    },
+    {
+      keys: ['ai tool', 'artificial intelligence', 'chatgpt', 'copilot', 'use ai', 'used ai', 'llm'],
+      a: "Ravali uses AI tools like GitHub Copilot and ChatGPT to speed up boilerplate, debugging, and code review — but the architecture decisions, API design, and Flutter UI work are her own."
+    },
+    {
+      keys: ['notice period', 'join immediately', 'when can she join', 'how soon'],
+      a: "For notice period and exact joining timelines, it's best to ask Ravali directly — reach her at ravalisinganamala@gmail.com or +91 6304164697."
+    },
+    {
+      keys: ['remote', 'work from home', 'wfh', 'relocate', 'relocation', 'onsite', 'location'],
+      a: "She's based in Hyderabad. For specifics on remote, hybrid, or relocation preferences, it's best to confirm directly with her by email or phone."
+    },
+    {
+      keys: ['salary', 'compensation', 'ctc', 'expected pay', 'pay expectation'],
+      a: "Compensation expectations are best discussed directly with Ravali — reach out at ravalisinganamala@gmail.com or +91 6304164697."
+    },
+    {
+      keys: ['years of experience', 'how many years', 'total experience', 'experience level'],
+      a: "She's been working as a Full Stack Developer at Alladi Cloud Solutions since Feb 2024, building production Flutter apps and Spring Boot APIs, alongside independently building SprintFlow solo."
+    },
+    {
+      keys: ['team size', 'team she work', 'worked alone', 'solo project', 'independently'],
+      a: "She's worked both in a team (at Alladi Cloud Solutions, collaborating with frontend and QA teams in Agile sprints) and solo — SprintFlow was independently conceived, designed, and built by her end to end."
+    },
+    {
+      keys: ['favorite project', 'proudest', 'best project', 'most challenging'],
+      a: "SprintFlow stands out — she built it independently from scratch, including 5 distinct user roles with granular permissions and a fully decoupled Firestore-backed clean architecture. LocalTaxi is her most complex team project, handling real-time ride matching at scale."
+    },
+    {
+      keys: ['database', 'sql', 'mysql', 'firestore db'],
+      a: "She works with MySQL for schema design and query optimization, plus Firebase Firestore and Realtime Database for live, real-time data sync."
+    },
+    {
+      keys: ['payment', 'razorpay', 'upi'],
+      a: "She's integrated the Razorpay SDK for in-app payments supporting UPI, cards, and wallets — used in both LocalTaxi (fare collection) and other booking flows."
+    },
+    {
+      keys: ['deploy', 'devops', 'ec2', 'aws', 'ci/cd', 'github actions'],
+      a: "She manages end-to-end deployment herself on AWS EC2, using Maven builds, WinSCP for file transfers, and PuTTY for server management, with Git/GitHub Actions for version control and CI."
+    },
+    {
+      keys: ['angular', 'web frontend', 'frontend work'],
+      a: "Yes — she works with Angular, HTML, and CSS for web frontends, alongside Flutter for mobile. LocalTaxi and MTM both have Angular-based web components."
+    },
+    {
+      keys: ['ios', 'android', 'cross platform', 'cross-platform'],
+      a: "She builds cross-platform apps for both Android and iOS from a single Flutter codebase, using Material Design 3 and responsive layouts for mobile, tablet, and desktop."
+    },
+    {
+      keys: ['fresher', 'junior', 'senior', 'level', 'seniority'],
+      a: "She's shipped 3 production applications end to end and independently built a 4th from scratch, which reflects solid hands-on ownership across the full stack — best discussed in more depth directly with her."
+    },
+    {
+      keys: ['state management', 'riverpod', 'bloc', 'provider'],
+      a: "For state management she uses Riverpod, BLoC, and Provider — chosen depending on the complexity of real-time data flows in each app."
+    },
+    {
+      keys: ['testing', 'unit test', 'qa'],
+      a: "Her résumé highlights debugging, root cause analysis, and performance optimization; for specifics on testing practices or QA collaboration, it's best to ask her directly."
+    },
+    {
+      keys: ['why hire', 'why should we hire', 'strength', 'why her'],
+      a: "She's shipped 3 production apps end to end — not just built features, but owned deployment, performance, and payments too — and independently designed and built a 4th app solo. That combination of full-stack breadth and ownership is her core strength."
+    }
+  ];
+
+  function matchHardcoded(question){
+    var q = question.toLowerCase();
+    for(var i=0; i<HARDCODED.length; i++){
+      var entry = HARDCODED[i];
+      for(var j=0; j<entry.keys.length; j++){
+        if(q.indexOf(entry.keys[j]) !== -1){ return entry.a; }
+      }
+    }
+    return null;
+  }
+  // ------------------------------------------------------------------------
+
+  function addMsg(text, who){
+    var div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  async function askAssistant(question){
+    addMsg(question, 'user');
+    chatHistory.push({role:'user', content: question});
+
+    // 1. Try the hardcoded knowledge base first — instant, no network needed.
+    var hard = matchHardcoded(question);
+    if(hard){
+      addMsg(hard, 'bot');
+      chatHistory.push({role:'assistant', content: hard});
+      renderChips();
+      return;
+    }
+
+    // 2. Fall back to the live API for anything not covered above.
+    var typing = addMsg('thinking…', 'typing');
+    try{
+      var response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: RESUME_CONTEXT,
+          messages: chatHistory
+        })
+      });
+      var data = await response.json();
+      var textBlocks = (data.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; });
+      var reply = textBlocks.join('\n').trim() || "Sorry, I couldn't put that together — try asking another way.";
+      typing.remove();
+      addMsg(reply, 'bot');
+      chatHistory.push({role:'assistant', content: reply});
+      renderChips();
+    } catch(err){
+      typing.remove();
+      addMsg("I don't have a pre-set answer for that one yet — but you can scroll up for her full project and skills breakdown, or reach Ravali directly at ravalisinganamala@gmail.com / +91 6304164697 and she'll answer in person.", 'bot');
+      renderChips();
+    }
+  }
+
+  sendBtn.addEventListener('click', function(){
+    var q = input.value.trim();
+    if(!q) return;
+    input.value = '';
+    askAssistant(q);
+  });
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ sendBtn.click(); }
+  });
+  chips.addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if(!btn) return;
+    askAssistant(btn.getAttribute('data-q'));
+  });
+</script>
+</body>
+</html>
