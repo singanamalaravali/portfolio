@@ -80,6 +80,55 @@
     background:radial-gradient(circle, rgba(255,178,56,0.14), transparent 70%);
     pointer-events:none;
   }
+  /* SCROLL-REVEAL ANIMATION */
+  .reveal{
+    opacity:0; transform:translateY(38px) scale(0.94);
+    filter:blur(6px);
+    transition:opacity .7s cubic-bezier(.16,.8,.3,1), transform .7s cubic-bezier(.16,.8,.3,1), filter .7s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .reveal.visible{opacity:1; transform:translateY(0) scale(1); filter:blur(0);}
+
+  .skill-card, .proj-card, .exp-card, .info-card, .contact-card{
+    transition:transform .12s ease, border-color .25s ease, box-shadow .25s ease;
+    transform-style:preserve-3d; will-change:transform; position:relative; overflow:hidden;
+  }
+  .skill-card::before, .proj-card::before, .exp-card::before, .info-card::before, .contact-card::before{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:0;
+    background:radial-gradient(320px circle at var(--gx,50%) var(--gy,50%), rgba(255,178,56,0.22), transparent 62%);
+    transition:opacity .35s ease; z-index:0;
+  }
+  .skill-card:hover::before, .proj-card:hover::before, .exp-card:hover::before, .info-card:hover::before, .contact-card:hover::before{opacity:1;}
+  .skill-card > *, .proj-card > *, .exp-card > *, .info-card > *, .contact-card > *{position:relative; z-index:1;}
+  .skill-card:hover, .proj-card:hover, .exp-card:hover, .info-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--amber);
+    box-shadow:0 12px 30px rgba(0,0,0,0.35);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; filter:none; transition:none;}
+    .skill-card:hover, .proj-card:hover, .exp-card:hover, .info-card:hover{transform:none;}
+  }
+
+  #cursor-spotlight{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(650px circle at var(--spot-x,50%) var(--spot-y,50%), rgba(255,178,56,0.07), transparent 70%);
+  }
+  @media (prefers-reduced-motion: reduce){ #cursor-spotlight{display:none;} }
+  .page-content{position:relative; z-index:2;}
+
+  .type-cursor{
+    display:inline-block; width:3px; height:0.9em; background:var(--amber);
+    margin-left:2px; vertical-align:-0.08em; animation:blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  @media (prefers-reduced-motion: reduce){ .type-cursor{display:none;} }
+
+  .hero-name{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(30px, 5.5vw, 52px); letter-spacing:-0.01em;
+    color:var(--amber); margin-bottom:18px; line-height:1.05;
+  }
   .eyebrow{
     font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--teal); display:flex; align-items:center; gap:10px; margin-bottom:22px;
@@ -131,7 +180,7 @@
     display:flex; align-items:center; gap:14px; margin-bottom:34px;
   }
   .stop-marker .num{
-    font-family:var(--font-mono); font-size:12px; color:var(--ink); background:var(--teal);
+    font-family:var(--font-mono); font-size:12px; color:var(--ink); background:var(--amber);
     width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     flex:none; font-weight:600;
   }
@@ -187,6 +236,12 @@
   .status.built{background:#2A2438; color:#B79BF0;}
   .status.built .sd{background:#B79BF0;}
   .proj-tech{font-family:var(--font-mono); font-size:12px; color:var(--muted);}
+  .tech-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .tech-tag{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.02em;
+    background:var(--amber); color:#000000; border:1px solid var(--amber);
+    padding:5px 11px; border-radius:20px; white-space:nowrap;
+  }
   .proj-card p.desc{margin:0; font-size:14.5px; color:#C7CDDB;}
   .proj-card ul.bullets{font-size:14px;}
 
@@ -267,6 +322,8 @@
 </style>
 </head>
 <body>
+<div id="cursor-spotlight" aria-hidden="true"></div>
+<div class="page-content">
 
 <header class="nav">
   <div class="nav-inner">
@@ -291,9 +348,13 @@
 
 <section class="hero">
   <div class="wrap">
+    <div class="hero-name" id="hero-name">Ravali Singanamala</div>
     <div class="eyebrow"><span class="rule"></span>FULL STACK DEVELOPER · HYDERABAD</div>
-    <h1 class="headline">Ships mobile &amp; web apps <span class="accent">end to end</span> — Flutter front seat, Spring Boot under the hood.</h1>
-    <p class="sub">Three production apps shipped, a fourth in final rollout, and one built solo from the ground up. I move between Flutter UIs, Java/Spring Boot APIs, and Firebase real-time layers without losing speed.</p>
+    <h1 class="headline" id="hero-headline">Ships mobile &amp; web apps <span class="accent">end to end</span> — Flutter front seat, Spring Boot under the hood.</h1>
+    <noscript>
+      <style>#hero-name, #hero-headline{opacity:1 !important;}</style>
+    </noscript>
+    <p class="sub">Five production apps shipped end to end, including one built solo from the ground up. I move between Flutter UIs, Java/Spring Boot APIs, and Firebase real-time layers without losing speed.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="Ravali_Singanamala_Resume.pdf" download>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
@@ -317,7 +378,7 @@
       </a>
     </div>
     <div class="board">
-      <div><span class="k">Shipped</span><span class="v">3 apps in production</span></div>
+      <div><span class="k">Shipped</span><span class="v">5 apps in production</span></div>
       <div><span class="k">Solo build</span><span class="v">SprintFlow, agile PM app</span></div>
       <div><span class="k">Stack</span><span class="v">Flutter · Spring Boot · Firebase</span></div>
       <div><span class="k">Open to</span><span class="v">Flutter · Java Full Stack · Angular roles</span></div>
@@ -328,23 +389,23 @@
 <section id="about">
   <div class="wrap">
     <div class="stop-marker"><span class="num">01</span><h2>About</h2></div>
-    <p class="lede">I'm a Full Stack Developer at Alladi Cloud Solutions, building cross-platform Flutter apps and the Core Java / Spring Boot APIs behind them. My work spans booking systems, real-time messaging with Firebase, and payment integrations — deployed and managed myself on AWS EC2. I care about clean architecture and code that survives contact with real users, and I picked up a Rookie Award along the way for it.</p>
+    <p class="lede">Full Stack Developer at Alladi Cloud Solutions, building cross-platform Flutter apps and the Core Java / Spring Boot APIs behind them — booking systems, real-time Firebase messaging, and payment integrations, deployed and managed myself on AWS EC2. Rookie Award winner for clean architecture and code that survives real users.</p>
   </div>
 </section>
 
 <section id="skills">
   <div class="wrap">
-    <div class="stop-marker"><span class="num">02</span><h2>Skills</h2></div>
+    <div class="stop-marker"><span class="num">02</span><h2>Technical Expertise</h2></div>
     <div class="skill-grid">
-      <div class="skill-card"><h3>Mobile</h3><p>Flutter, Dart, Android, iOS, Material Design 3, custom widgets &amp; animations, responsive layouts</p></div>
-      <div class="skill-card"><h3>State Management</h3><p>Riverpod, BLoC, Provider</p></div>
-      <div class="skill-card"><h3>Firebase</h3><p>FCM push (HTTP v1), Firestore real-time listeners, Firebase Auth, Analytics</p></div>
-      <div class="skill-card"><h3>Backend</h3><p>Core Java, Spring Boot, Spring MVC, RESTful APIs (JSON), Maven</p></div>
-      <div class="skill-card"><h3>Database</h3><p>MySQL schema design &amp; query optimization, SQL, Firestore, Realtime DB</p></div>
-      <div class="skill-card"><h3>Cloud &amp; DevOps</h3><p>AWS EC2, Git, GitHub, GitHub Actions, PuTTY, WinSCP</p></div>
-      <div class="skill-card"><h3>Web Frontend</h3><p>Angular, HTML, CSS</p></div>
-      <div class="skill-card"><h3>Payments</h3><p>Razorpay SDK, UPI workflows</p></div>
-      <div class="skill-card"><h3>Architecture</h3><p>MVC, Clean Architecture, Agile / Scrum</p></div>
+      <div class="skill-card reveal"><h3>Mobile</h3><p>Flutter (2.x–3.x), Dart, Android, iOS, Material Design 3, custom widgets &amp; animations, responsive layouts</p></div>
+      <div class="skill-card reveal"><h3>State Management</h3><p>Riverpod, BLoC, Provider</p></div>
+      <div class="skill-card reveal"><h3>Firebase</h3><p>FCM push (HTTP v1), Firestore real-time listeners, Firebase Auth, Analytics</p></div>
+      <div class="skill-card reveal"><h3>Backend</h3><p>Core Java, Spring Boot, Spring MVC, RESTful APIs (JSON), Maven</p></div>
+      <div class="skill-card reveal"><h3>Database</h3><p>MySQL schema design &amp; query optimization, SQL, Firestore, Realtime DB</p></div>
+      <div class="skill-card reveal"><h3>Cloud &amp; DevOps</h3><p>AWS EC2, Git, GitHub, GitHub Actions, PuTTY, WinSCP</p></div>
+      <div class="skill-card reveal"><h3>Web Frontend</h3><p>Angular, HTML, CSS</p></div>
+      <div class="skill-card reveal"><h3>Payments</h3><p>Razorpay SDK, UPI workflows</p></div>
+      <div class="skill-card reveal"><h3>Architecture</h3><p>MVC, Clean Architecture, Agile / Scrum</p></div>
     </div>
   </div>
 </section>
@@ -352,14 +413,14 @@
 <section id="experience">
   <div class="wrap">
     <div class="stop-marker"><span class="num">03</span><h2>Experience</h2></div>
-    <div class="exp-card">
+    <div class="exp-card reveal">
       <div class="exp-head">
         <h3>Flutter + Full Stack Java Developer</h3>
         <span class="dates">Feb 2024 – Present</span>
       </div>
       <div class="exp-org">Alladi Cloud Solutions · Hyderabad, India</div>
       <ul class="bullets">
-        <li>Delivered 3 production applications — CloudBus and ActNow are live in production; LocalTaxi (driver &amp; passenger apps) is in final rollout to production.</li>
+        <li>Delivered 5 production applications — CloudBus, ActNow, LocalTaxi (driver &amp; passenger apps), MTM, and SprintFlow are all live in production.</li>
         <li>Built scalable RESTful APIs using Core Java, Spring Boot, and Spring MVC; designed and optimized MySQL schemas and queries to improve application performance.</li>
         <li>Built cross-platform Flutter apps for Android and iOS from a single codebase, using Riverpod and BLoC for state management.</li>
         <li>Used FCM for real-time push notifications between driver and passenger apps, and Firestore for live booking-state sync, with Firebase Auth for secure user management.</li>
@@ -377,12 +438,12 @@
     <div class="stop-marker"><span class="num">04</span><h2>Projects</h2></div>
     <div class="proj-grid">
 
-      <div class="proj-card">
+      <div class="proj-card reveal">
         <div class="proj-top">
           <h3>CloudBus — Online Bus Booking System</h3>
           <span class="status live"><span class="sd"></span>In Production</span>
         </div>
-        <div class="proj-tech">Flutter · Spring Boot · Core Java · AWS EC2 · REST API</div>
+        <div class="tech-tags"><span class="tech-tag">Flutter</span><span class="tech-tag">Spring Boot</span><span class="tech-tag">Core Java</span><span class="tech-tag">AWS EC2</span><span class="tech-tag">REST API</span></div>
         <p class="desc">Mobile and web booking platform for inter-city bus routes: seat selection, booking confirmation, and ticket generation.</p>
         <ul class="bullets">
           <li>Built Spring Boot microservice APIs for route management, seat availability, and booking lifecycle.</li>
@@ -400,12 +461,12 @@
         </div>
       </div>
 
-      <div class="proj-card">
+      <div class="proj-card reveal">
         <div class="proj-top">
           <h3>ActNow — Learning &amp; Assessment Platform</h3>
           <span class="status live"><span class="sd"></span>In Production</span>
         </div>
-        <div class="proj-tech">Flutter · Spring Boot · Core Java · MySQL · AWS EC2</div>
+        <div class="tech-tags"><span class="tech-tag">Flutter</span><span class="tech-tag">Spring Boot</span><span class="tech-tag">Core Java</span><span class="tech-tag">MySQL</span><span class="tech-tag">AWS EC2</span></div>
         <p class="desc">Practice tests, chapter-level tests, and full tests so students can track performance and progress.</p>
         <ul class="bullets">
           <li>Backend modules for authentication, user management, and testing functionality.</li>
@@ -417,12 +478,12 @@
         </a>
       </div>
 
-      <div class="proj-card">
+      <div class="proj-card reveal">
         <div class="proj-top">
           <h3>LocalTaxi — Online Cab Booking System</h3>
-          <span class="status enroute"><span class="sd"></span>Going to Production</span>
+          <span class="status live"><span class="sd"></span>In Production</span>
         </div>
-        <div class="proj-tech">Flutter · Spring Boot · Core Java · Angular · Firebase (FCM) · Razorpay · AWS EC2</div>
+        <div class="tech-tags"><span class="tech-tag">Flutter</span><span class="tech-tag">Spring Boot</span><span class="tech-tag">Core Java</span><span class="tech-tag">Angular</span><span class="tech-tag">Firebase (FCM)</span><span class="tech-tag">Razorpay</span><span class="tech-tag">AWS EC2</span></div>
         <p class="desc">Driver-passenger matching and ride booking workflows, with modules for drivers, passengers, companies, and administrators.</p>
         <ul class="bullets">
           <li>Integrated FCM for ride updates and booking confirmations.</li>
@@ -435,12 +496,12 @@
         </a>
       </div>
 
-      <div class="proj-card">
+      <div class="proj-card reveal">
         <div class="proj-top">
           <h3>MTM — Mobile Bartering Platform</h3>
           <span class="status built"><span class="sd"></span>Built</span>
         </div>
-        <div class="proj-tech">Flutter · Spring Boot · Angular · Firebase Auth · REST API</div>
+        <div class="tech-tags"><span class="tech-tag">Flutter</span><span class="tech-tag">Spring Boot</span><span class="tech-tag">Angular</span><span class="tech-tag">Firebase Auth</span><span class="tech-tag">REST API</span></div>
         <p class="desc">End-to-end peer-to-peer barter app: listing items, negotiating trades, and completing transactions.</p>
         <ul class="bullets">
           <li>Spring Boot APIs covering listing, trade-negotiation state machine, and audit-trailed transaction tracking.</li>
@@ -448,12 +509,12 @@
         </ul>
       </div>
 
-      <div class="proj-card">
+      <div class="proj-card reveal">
         <div class="proj-top">
           <h3>SprintFlow — Agile Team Management App</h3>
           <span class="status built"><span class="sd"></span>Independently Built</span>
         </div>
-        <div class="proj-tech">Flutter · Dart · Firebase (Firestore, Auth, FCM) · Riverpod · BLoC</div>
+        <div class="tech-tags"><span class="tech-tag">Flutter</span><span class="tech-tag">Dart</span><span class="tech-tag">Firebase (Firestore, Auth, FCM)</span><span class="tech-tag">Riverpod</span><span class="tech-tag">BLoC</span></div>
         <p class="desc">Conceived, designed, and built solo — sprints, user stories, standups, and attendance with role-based access.</p>
         <ul class="bullets">
           <li>5 roles — Admin, Product Manager, Product Owner, Developer, Tester — with granular permissions.</li>
@@ -470,17 +531,17 @@
   <div class="wrap">
     <div class="stop-marker"><span class="num">05</span><h2>Achievements &amp; Education</h2></div>
     <div class="split">
-      <div class="info-card">
+      <div class="info-card reveal">
         <h4>Rookie Award</h4>
         <div class="meta">Alladi Cloud Solutions</div>
         <p>Recognized for excellent performance and impactful contribution.</p>
       </div>
-      <div class="info-card">
+      <div class="info-card reveal">
         <h4>B.Tech — Electronics &amp; Communication Engineering</h4>
         <div class="meta">Vaagdevi Institute of Technology and Science · 2018 – 2022 · CGPA 7.8/10</div>
         <p>Proddatur, Kadapa</p>
       </div>
-      <div class="info-card">
+      <div class="info-card reveal">
         <h4>Intermediate (MPC)</h4>
         <div class="meta">Sai Parameswara Junior College · 2016 – 2018 · 94%</div>
         <p>Jammalamadugu, Kadapa</p>
@@ -494,27 +555,27 @@
     <div class="stop-marker"><span class="num">06</span><h2>Final Stop — Get in Touch</h2></div>
     <p class="lede">Open to full stack and Flutter roles. The quickest ways to reach me are below — or ask the assistant in the corner about my work.</p>
     <div class="contact-grid">
-      <a class="contact-card" href="https://github.com/singanamalaravali" target="_blank" rel="noopener">
+      <a class="contact-card reveal" href="https://github.com/singanamalaravali" target="_blank" rel="noopener">
         <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5 3.2 9.3 7.8 10.8.6.1.8-.3.8-.6v-2.2c-3.2.7-3.8-1.4-3.8-1.4-.5-1.3-1.3-1.6-1.3-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0023.5 12c0-6.3-5.2-11.5-11.5-11.5z"/></svg>
         <span class="label">GitHub</span>
         <span class="val">github.com/singanamalaravali</span>
       </a>
-      <a class="contact-card" href="mailto:ravalisinganamala@gmail.com">
+      <a class="contact-card reveal" href="mailto:ravalisinganamala@gmail.com">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
         <span class="label">Email</span>
         <span class="val">ravalisinganamala@gmail.com</span>
       </a>
-      <a class="contact-card" href="tel:+916304164697">
+      <a class="contact-card reveal" href="tel:+916304164697">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7 12.4 12.4 0 00.7 2.8 2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4 12.4 12.4 0 002.8.7 2 2 0 011.7 2z"/></svg>
         <span class="label">Call</span>
         <span class="val">+91 63041 64697</span>
       </a>
-      <a class="contact-card" href="https://linkedin.com/in/singanamala-ravali-939613225" target="_blank" rel="noopener">
+      <a class="contact-card reveal" href="https://linkedin.com/in/singanamala-ravali-939613225" target="_blank" rel="noopener">
         <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.06c.53-1 1.83-2 3.77-2 4 0 4.87 2.6 4.87 6V23h-4v-6.3c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.6-2.4 3.3V23h-4V8.5z"/></svg>
         <span class="label">LinkedIn</span>
         <span class="val">singanamala-ravali-939613225</span>
       </a>
-      <a class="contact-card" href="Ravali_Singanamala_Resume.pdf" download>
+      <a class="contact-card reveal" href="Ravali_Singanamala_Resume.pdf" download>
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
         <span class="label">Résumé</span>
         <span class="val">Download PDF</span>
@@ -526,6 +587,7 @@
 </div><!-- /transit -->
 
 <footer>Hyderabad — 500016 · Built with Flutter energy and Spring Boot reliability</footer>
+</div><!-- /page-content -->
 
 <!-- CHAT WIDGET -->
 <button id="route-assistant-toggle" aria-haspopup="dialog" aria-expanded="false">
@@ -551,6 +613,116 @@
 </div>
 
 <script>
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Typewriter effect for name + headline -----------------------------
+  function typeText(el, parts, speed, done){
+    el.innerHTML = '';
+    var cursor = document.createElement('span');
+    cursor.className = 'type-cursor';
+    el.appendChild(cursor);
+    var partIndex = 0, charIndex = 0, currentSpan = null;
+    function tick(){
+      if(partIndex >= parts.length){
+        cursor.remove();
+        if(done) done();
+        return;
+      }
+      var part = parts[partIndex];
+      if(!currentSpan){
+        currentSpan = document.createElement('span');
+        if(part.cls) currentSpan.className = part.cls;
+        el.insertBefore(currentSpan, cursor);
+      }
+      currentSpan.textContent += part.text[charIndex];
+      charIndex++;
+      if(charIndex >= part.text.length){
+        partIndex++; charIndex = 0; currentSpan = null;
+      }
+      setTimeout(tick, speed);
+    }
+    tick();
+  }
+
+  if(prefersReducedMotion){
+    // Leave the original static markup as-is; nothing to animate.
+  } else {
+    var nameEl = document.getElementById('hero-name');
+    var headlineEl = document.getElementById('hero-headline');
+    if(nameEl && headlineEl){
+      typeText(nameEl, [{text:'Ravali Singanamala', cls:''}], 55, function(){
+        typeText(headlineEl, [
+          {text:'Ships mobile & web apps ', cls:''},
+          {text:'end to end', cls:'accent'},
+          {text:' — Flutter front seat, Spring Boot under the hood.', cls:''}
+        ], 16);
+      });
+    }
+  }
+  // ------------------------------------------------------------------------
+
+  // ---- 3D tilt + glow on cards --------------------------------------------
+  if(!prefersReducedMotion){
+    var tiltCards = document.querySelectorAll('.skill-card, .proj-card, .exp-card, .info-card, .contact-card');
+    tiltCards.forEach(function(card){
+      card.addEventListener('mousemove', function(e){
+        var rect = card.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var cx = rect.width / 2, cy = rect.height / 2;
+        var rotateX = ((y - cy) / cy) * -6;
+        var rotateY = ((x - cx) / cx) * 6;
+        card.style.transform = 'perspective(700px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateY(-4px)';
+        card.style.setProperty('--gx', (x / rect.width * 100) + '%');
+        card.style.setProperty('--gy', (y / rect.height * 100) + '%');
+      });
+      card.addEventListener('mouseleave', function(){
+        card.style.transform = '';
+      });
+    });
+  }
+  // ------------------------------------------------------------------------
+
+  // ---- Cursor-following spotlight background ------------------------------
+  if(!prefersReducedMotion){
+    var spotlight = document.getElementById('cursor-spotlight');
+    var sx = window.innerWidth / 2, sy = window.innerHeight / 2;
+    var tx = sx, ty = sy;
+    document.addEventListener('mousemove', function(e){
+      tx = e.clientX; ty = e.clientY;
+    }, {passive:true});
+    function animateSpotlight(){
+      sx += (tx - sx) * 0.12;
+      sy += (ty - sy) * 0.12;
+      if(spotlight){
+        spotlight.style.setProperty('--spot-x', sx + 'px');
+        spotlight.style.setProperty('--spot-y', sy + 'px');
+      }
+      requestAnimationFrame(animateSpotlight);
+    }
+    requestAnimationFrame(animateSpotlight);
+  }
+  // ------------------------------------------------------------------------
+
+  // Scroll-reveal animation for cards
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    revealEls.forEach(function(el, i){
+      el.style.transitionDelay = (i % 6) * 0.1 + 's';
+      revealObserver.observe(el);
+    });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('visible'); });
+  }
+
   // Route progress line
   var progress = document.getElementById('route-progress');
   function updateRoute(){
@@ -590,10 +762,10 @@
 
 RÉSUMÉ:
 Full Stack Developer — Flutter, Core Java & Spring Boot, Firebase. Hyderabad. Contact: ravalisinganamala@gmail.com, +91 6304164697, linkedin.com/in/singanamala-ravali-939613225.
-Summary: Delivered 3 production apps end to end — CloudBus and ActNow live in production, LocalTaxi (driver+passenger) in final rollout. Independently designed and built SprintFlow, a full-stack agile team management app. Hands-on with Riverpod, BLoC, Firebase (FCM, Firestore, Auth), MySQL, AWS EC2. She is currently open to work as a Flutter Developer, Java Full Stack Developer, or Angular Developer.
+Summary: Delivered 5 production apps end to end — CloudBus, ActNow, LocalTaxi (driver+passenger), MTM, and SprintFlow are all live in production. SprintFlow was independently designed and built solo. Hands-on with Riverpod, BLoC, Firebase (FCM, Firestore, Auth), MySQL, AWS EC2. She is currently open to work as a Flutter Developer, Java Full Stack Developer, or Angular Developer.
 Skills: Flutter 2.x-3.x, Dart, Android, iOS, Material Design 3; Riverpod, BLoC, Provider; Firebase FCM/Firestore/Auth/Analytics; Core Java, Spring Boot, Spring MVC, REST APIs, Maven; MySQL; AWS EC2, Git, GitHub Actions, PuTTY, WinSCP; Angular, HTML, CSS; Razorpay/UPI; MVC, Clean Architecture, Agile/Scrum.
 Experience: Flutter + Full Stack Java Developer, Alladi Cloud Solutions, Hyderabad (Feb 2024-Present). Built Spring Boot REST APIs, optimized MySQL, built cross-platform Flutter apps, used FCM/Firestore/Auth, integrated Razorpay payments, deployed on AWS EC2 via Maven/WinSCP/PuTTY, led code reviews in Agile sprints.
-Projects: CloudBus (bus booking, Flutter+Spring Boot+AWS EC2, in production). ActNow (learning/assessment platform, Flutter+Spring Boot+MySQL, in production). LocalTaxi (cab booking, Flutter+Spring Boot+Angular+Firebase+Razorpay, going to production - driver/passenger/company/admin modules, real-time ride matching). MTM (mobile bartering platform, Flutter+Spring Boot+Angular+Firebase Auth). SprintFlow (agile team management, Flutter+Firebase+Riverpod+BLoC, independently built solo, 5 role types).
+Projects: CloudBus (bus booking, Flutter+Spring Boot+AWS EC2, in production). ActNow (learning/assessment platform, Flutter+Spring Boot+MySQL, in production). LocalTaxi (cab booking, Flutter+Spring Boot+Angular+Firebase+Razorpay, in production - driver/passenger/company/admin modules, real-time ride matching). MTM (mobile bartering platform, Flutter+Spring Boot+Angular+Firebase Auth, in production). SprintFlow (agile team management, Flutter+Firebase+Riverpod+BLoC, independently built solo, in production, 5 role types).
 Achievements: Rookie Award at Alladi Cloud Solutions.
 Education: B.Tech Electronics & Communication Engineering, Vaagdevi Institute of Technology and Science, 2018-2022, CGPA 7.8/10. Intermediate (MPC), Sai Parameswara Junior College, 2016-2018, 94%.`;
 
@@ -659,7 +831,7 @@ Education: B.Tech Electronics & Communication Engineering, Vaagdevi Institute of
     },
     {
       keys: ['project list', 'list of project', 'projects she', 'what project', 'her projects', 'all project', 'project means', 'show me project', 'projects?'],
-      a: "Here's the project list:\n\n1. CloudBus — online bus booking system (Flutter, Spring Boot, AWS EC2) — In Production\n2. ActNow — learning & assessment platform (Flutter, Spring Boot, MySQL) — In Production\n3. LocalTaxi — cab booking system, driver + passenger apps (Flutter, Spring Boot, Angular, Firebase, Razorpay) — Going to Production\n4. MTM — mobile bartering platform (Flutter, Spring Boot, Angular, Firebase Auth) — Built\n5. SprintFlow — agile team management app (Flutter, Firebase, Riverpod, BLoC) — Independently built solo"
+      a: "Here's the project list:\n\n1. CloudBus — online bus booking system (Flutter, Spring Boot, AWS EC2) — In Production\n2. ActNow — learning & assessment platform (Flutter, Spring Boot, MySQL) — In Production\n3. LocalTaxi — cab booking system, driver + passenger apps (Flutter, Spring Boot, Angular, Firebase, Razorpay) — In Production\n4. MTM — mobile bartering platform (Flutter, Spring Boot, Angular, Firebase Auth) — Built\n5. SprintFlow — agile team management app (Flutter, Firebase, Riverpod, BLoC) — Independently built solo"
     },
     {
       keys: ['stack', 'tech stack', 'technolog', 'skills', 'strongest'],
@@ -751,7 +923,7 @@ Education: B.Tech Electronics & Communication Engineering, Vaagdevi Institute of
     },
     {
       keys: ['fresher', 'junior', 'senior', 'level', 'seniority'],
-      a: "She's shipped 3 production applications end to end and independently built a 4th from scratch, which reflects solid hands-on ownership across the full stack — best discussed in more depth directly with her."
+      a: "She's shipped 5 production applications end to end, including one she independently designed and built solo from scratch, which reflects solid hands-on ownership across the full stack — best discussed in more depth directly with her."
     },
     {
       keys: ['state management', 'riverpod', 'bloc', 'provider'],
@@ -763,7 +935,7 @@ Education: B.Tech Electronics & Communication Engineering, Vaagdevi Institute of
     },
     {
       keys: ['why hire', 'why should we hire', 'strength', 'why her'],
-      a: "She's shipped 3 production apps end to end — not just built features, but owned deployment, performance, and payments too — and independently designed and built a 4th app solo. That combination of full-stack breadth and ownership is her core strength."
+      a: "She's shipped 5 production apps end to end — not just built features, but owned deployment, performance, and payments too — including one she independently designed and built solo. That combination of full-stack breadth and ownership is her core strength."
     }
   ];
 
